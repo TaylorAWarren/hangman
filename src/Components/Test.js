@@ -1,10 +1,10 @@
 import React, {useState} from 'react'
 import { csv } from 'd3-request';
+import word_list from "../Constants/words.json"
 
 export default function Test() {
     const [wordLength, setLength] = useState([6])
     const [array, setArray] = useState([]);
-    // const [currentGuess, setCurrentGuess] = useState([]);
     const [guesses, setGuesses] = useState([]);
     const [correctGuesses, setCorrectGuesses] = useState([]);
     const [alphabet, setAlphabet] = useState([]);
@@ -12,19 +12,16 @@ export default function Test() {
     const handleGenerateClick = (e) => {
         e.preventDefault();
         let full_arr = []
-        csv(process.env.PUBLIC_URL + "/words.csv", function(err, data) {
-            console.log("Total import : " + data.length)
-            let filled_arr = data.filter(e => (e.word.length == wordLength)).map(e => e.word)
-            console.log("Filtered elements: " + filled_arr.length)
-            full_arr = full_arr.concat(filled_arr)
-            setArray(full_arr)
-            let blank_guesses = []
-            for(let i = 0; i< wordLength; i++){
-                blank_guesses.push("_")
-            }
-            setCorrectGuesses(blank_guesses)
-            setAlphabet(["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"].map(letter => ({letter, active:true})))
-        })
+        let filled_arr = word_list.filter(e => (e.length == wordLength)).map(e => e)
+        console.log("Filtered elements: " + filled_arr.length)
+        full_arr = full_arr.concat(filled_arr)
+        setArray(full_arr)
+        let blank_guesses = []
+        for(let i = 0; i< wordLength; i++){
+            blank_guesses.push("_")
+        }
+        setCorrectGuesses(blank_guesses)
+        setAlphabet(["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"].map(letter => ({letter, active:true})))
     }
 
     const handleResetClick = (e) => {
@@ -38,10 +35,6 @@ export default function Test() {
     const handleLengthChange = (e) => {
         setLength(e.target.value)
     }
-
-    // const handleLetterChange = (e) => {
-    //     setCurrentGuess(e.target.value)
-    // }
 
     const generate_list_blob = () => {
         return(
@@ -59,18 +52,6 @@ export default function Test() {
     const guesses_blob = () => {
         return (<p>{guesses.map(guess=>guess)}</p>)
     }
-
-    // const guess_blob = () => {
-    //     return(
-    //         <div>
-    //             <p>Please pick a letter to guess</p>
-    //             <form onSubmit={(e) => {guess(e)}}>
-    //                 <input type={String} value={currentGuess} onChange={(e) => {handleLetterChange(e)}} onSubmit={(e) => {guess(e)}}></input>
-    //                 <button onClick={(e) => {guess(e)}}>Guess</button>
-    //             </form>
-    //         </div>
-    //     )
-    // }
 
     const filter_letter = (currentGuess) => {
             setArray(array.filter(inWord => (!inWord.includes(currentGuess))))
@@ -144,11 +125,8 @@ export default function Test() {
   return (
     <div>
         {generate_list}
-        {/* {filled_list.length} */}
         {printed_correct_guesses()}
         {alphabet_blob()}
-        {/* {(filled_list.length? guess_blob() : "")} */}
-        {/* {guesses_blob()} */}
     </div>
   )
 }
