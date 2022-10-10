@@ -1,6 +1,5 @@
 import React, {useState} from 'react'
 import { csv } from 'd3-request';
-import url from '../Constants/all_words.csv';
 
 export default function Test() {
     const [wordLength, setLength] = useState([6])
@@ -13,7 +12,7 @@ export default function Test() {
     const handleGenerateClick = (e) => {
         e.preventDefault();
         let full_arr = []
-        csv(url, function(err, data) {
+        csv(process.env.PUBLIC_URL + "/words.csv", function(err, data) {
             console.log("Total import : " + data.length)
             let filled_arr = data.filter(e => (e.word.length == wordLength)).map(e => e.word)
             console.log("Filtered elements: " + filled_arr.length)
@@ -139,13 +138,13 @@ export default function Test() {
     }
 
     const reset_button = () => (<button onClick = {(e) => {handleResetClick(e)}}> Reset </button>)
-    const filled_list = (array.length ? array.map((element, index) => (<div>{element}</div>)) : <div></div>)
+    //const filled_list = (array.length ? array.map((element, index) => (<div>{element}</div>)) : <div></div>)
     const generate_list = (!array.length ? (generate_list_blob()) : (reset_button()))
 
   return (
     <div>
         {generate_list}
-        {filled_list.length}
+        {/* {filled_list.length} */}
         {printed_correct_guesses()}
         {alphabet_blob()}
         {/* {(filled_list.length? guess_blob() : "")} */}
