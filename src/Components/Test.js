@@ -14,13 +14,14 @@ export default function Test() {
 
     const handleGenerateClick = (e) => {
         e.preventDefault();
+        let protectedWordLength = (wordLength <= 22 ? wordLength >= 1 ? wordLength : 1 : 22)
         let full_arr = []
-        let filled_arr = word_list.filter(e => (e.length == wordLength)).map(e => e)
+        let filled_arr = word_list.filter(e => (e.length == protectedWordLength)).map(e => e)
         console.log("Filtered elements: " + filled_arr.length)
         full_arr = full_arr.concat(filled_arr)
         setArray(full_arr)
         let blank_guesses = []
-        for(let i = 0; i< wordLength; i++){
+        for(let i = 0; i< protectedWordLength; i++){
             blank_guesses.push("_")
         }
         setCorrectGuesses(blank_guesses)
@@ -34,6 +35,7 @@ export default function Test() {
         setAlphabet([])
         setWrongGuesses(0)
         setSuccess(false)
+        setLength(6)
     }
 
     const handleLengthChange = (e) => {
