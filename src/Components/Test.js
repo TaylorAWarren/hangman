@@ -1,13 +1,14 @@
 import React, {useState} from 'react'
 import { csv } from 'd3-request';
 import word_list from "../Constants/words.json"
+import {image_map} from "../Constants/image_map.js"
 
 export default function Test() {
     const [wordLength, setLength] = useState([6])
-    const [array, setArray] = useState([]);
-    const [guesses, setGuesses] = useState([]);
+    const [array, setArray] = useState([]);;
     const [correctGuesses, setCorrectGuesses] = useState([]);
     const [alphabet, setAlphabet] = useState([]);
+    const [wrongGuesses, setWrongGuesses] = useState(0);
 
     const handleGenerateClick = (e) => {
         e.preventDefault();
@@ -27,9 +28,9 @@ export default function Test() {
     const handleResetClick = (e) => {
         e.preventDefault();
         setArray([])
-        setGuesses([])
         setCorrectGuesses([])
         setAlphabet([])
+        setWrongGuesses(0)
     }
 
     const handleLengthChange = (e) => {
@@ -49,10 +50,6 @@ export default function Test() {
         )
     }
 
-    const guesses_blob = () => {
-        return (<p>{guesses.map(guess=>guess)}</p>)
-    }
-
     const filter_letter = (currentGuess) => {
             setArray(array.filter(inWord => (!inWord.includes(currentGuess))))
     }
@@ -68,7 +65,6 @@ export default function Test() {
     const guess = (e, currentGuess) => {
         e.preventDefault()
             setAlphabet(alphabet.map(letter => (letter.letter == currentGuess ? {...letter, active: false}:{...letter})))
-            setGuesses(guesses.concat(currentGuess))
             let survivor = array.filter(inWord => (!inWord.includes(currentGuess)))
             let temp_arr = []
             if(survivor.length < 1){
@@ -77,6 +73,7 @@ export default function Test() {
             }
             if(array.length>1 && survivor.length >= 1){
                 //Remove all w/ given letter
+                setWrongGuesses(wrongGuesses+1)
                 filter_letter(currentGuess)
          }
          else{
@@ -107,7 +104,7 @@ export default function Test() {
             }
         }
         else {
-            //Incorrect no filter guess
+            setWrongGuesses(wrongGuesses+1)
         }
         }
     }
@@ -118,15 +115,23 @@ export default function Test() {
         </div>)
     }
 
+    const wrong_guess_blob = () => {
+        return (!array.length ? "" : <p>Wrong Guesses : {wrongGuesses}</p>)
+    }
+
     const reset_button = () => (<button onClick = {(e) => {handleResetClick(e)}}> Reset </button>)
     //const filled_list = (array.length ? array.map((element, index) => (<div>{element}</div>)) : <div></div>)
     const generate_list = (!array.length ? (generate_list_blob()) : (reset_button()))
+
+    const hangman_image = () => (!array.length ? "" : <img src={image_map[wrongGuesses]} style={styles.hangman_image}/>)
 
   return (
     <div>
         {generate_list}
         {printed_correct_guesses()}
         {alphabet_blob()}
+        {hangman_image()}
+        {/* {wrong_guess_blob()} */}
     </div>
   )
 }
@@ -144,5 +149,9 @@ const styles = {
         backgroundColor: "blue",
         display: "inline",
         margin: "5px"
+    },
+    hangman_image: {
+        height:"160px",
+        width: "160px"
     }
 }
