@@ -14,7 +14,7 @@ export default function Test() {
 
     const handleGenerateClick = (e) => {
         e.preventDefault();
-        let protectedWordLength = (wordLength <= 22 ? wordLength >= 1 ? wordLength : 1 : 22)
+        let protectedWordLength = (wordLength <= 22 ? wordLength >= 2 ? wordLength : 2 : 22)
         let full_arr = []
         let filled_arr = word_list.filter(e => (e.length == protectedWordLength)).map(e => e)
         console.log("Filtered elements: " + filled_arr.length)
