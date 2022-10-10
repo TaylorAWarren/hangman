@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import { csv } from 'd3-request';
 import word_list from "../Constants/words.json"
 import {image_map} from "../Constants/image_map.js"
+import happy_hangman from "../Images/happy_hangman.png"
 
 export default function Test() {
     const [wordLength, setLength] = useState([6])
@@ -9,6 +10,7 @@ export default function Test() {
     const [correctGuesses, setCorrectGuesses] = useState([]);
     const [alphabet, setAlphabet] = useState([]);
     const [wrongGuesses, setWrongGuesses] = useState(0);
+    const [success, setSuccess] = useState(false)
 
     const handleGenerateClick = (e) => {
         e.preventDefault();
@@ -31,6 +33,7 @@ export default function Test() {
         setCorrectGuesses([])
         setAlphabet([])
         setWrongGuesses(0)
+        setSuccess(false)
     }
 
     const handleLengthChange = (e) => {
@@ -80,15 +83,17 @@ export default function Test() {
              if( array[0].includes(currentGuess)){
                 //correct guess
                 if(array.length == 1){
-                    setCorrectGuesses(correctGuesses.map((e, index) => {
-                    if(array[0][index] == currentGuess)
-                    {
-                        return currentGuess
-                    }
-                    else {
-                        return e
-                    }
-                }))
+                    let guess_string = correctGuesses.map((e, index) => {
+                        if(array[0][index] == currentGuess)
+                        {
+                            return currentGuess
+                        }
+                        else {
+                            return e
+                        }
+                    })
+                    setCorrectGuesses(guess_string)
+                    setSuccess(!guess_string.filter(e => e == "_").length && wrongGuesses < 8)
             }
             else{
                 setArray(temp_arr)
@@ -111,19 +116,15 @@ export default function Test() {
 
     const printed_correct_guesses = () => {
         return(<div>
-            {correctGuesses.map((guess, index) => <p key={index}>{guess}</p>)}
+            {correctGuesses.map((guess, index) => <p key={index} style={styles.guessed_letters}>{guess}</p>)}
         </div>)
-    }
-
-    const wrong_guess_blob = () => {
-        return (!array.length ? "" : <p>Wrong Guesses : {wrongGuesses}</p>)
     }
 
     const reset_button = () => (<button onClick = {(e) => {handleResetClick(e)}}> Reset </button>)
     //const filled_list = (array.length ? array.map((element, index) => (<div>{element}</div>)) : <div></div>)
     const generate_list = (!array.length ? (generate_list_blob()) : (reset_button()))
 
-    const hangman_image = () => (!array.length ? "" : <img src={image_map[wrongGuesses]} style={styles.hangman_image}/>)
+    const hangman_image = () => (!array.length ? "" : success ? <img src={happy_hangman} style={styles.hangman_image}/>: <img src={image_map[wrongGuesses]} style={styles.hangman_image}/>)
 
   return (
     <div>
@@ -153,5 +154,10 @@ const styles = {
     hangman_image: {
         height:"160px",
         width: "160px"
+    },
+    guessed_letters: {
+        display: "inline",
+        margin: "5px",
+        fontSize: "30px"
     }
 }
